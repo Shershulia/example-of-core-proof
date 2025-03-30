@@ -1,0 +1,30 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Rust / Cargo
+target/
+**/*.rs.bk
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel/
+
+# SP1 specific
+*.bin
+/elf/
+focus_session_proof.bin
+
+# Ignore proof files except examples needed for documentation
+script/proof-with-pis.bin

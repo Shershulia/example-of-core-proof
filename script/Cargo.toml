@@ -1,0 +1,22 @@
+[package]
+name = "example_proof_script"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "prove"
+path = "src/bin/prove.rs"
+
+
+[dependencies]
+sp1-sdk = "4.0.0"
+alloy-sol-types = "0.7.7"
+example_proof_lib = { path = "../lib" }
+clap = { version = "4.3.0", features = ["derive"] }
+dotenv = "0.15.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+hex = "0.4.3"
+
+[build-dependencies]
+sp1-build = "4.0.0"
