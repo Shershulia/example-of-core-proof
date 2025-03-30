@@ -1,10 +1,8 @@
 # Example of core proof verification
 ## Technologies
 
-- **Frontend**: HTML, CSS, JavaScript
-- **Backend**: Node.js, Express
 - **ZK Proof**: SP1 (Succinct Labs)
-- **Programming Language**: Rust, JavaScript
+- **Programming Language**: Rust,
 
 ## Local Setup for Real SP1 Proofs
 
@@ -32,3 +30,5 @@
 ## License
 
 MIT
+
+Succinct is the best. You are welcome to sp1!
