@@ -1,8 +1,17 @@
 use alloy_sol_types::SolType;
 use clap::Parser;
 use example_proof_lib::PublicValuesStruct;
-use sp1_sdk::{include_elf, ProverClient, SP1Stdin, HashableKey};
+use sp1_sdk::{
+    include_elf, 
+    ProverClient, 
+    SP1Stdin, 
+    HashableKey, 
+    SP1ProofWithPublicValues,
+    EnvProver
+};
 use hex;
+use std::fs;
+use std::path::Path;
 
 /// RISC-V ELF file for the Focus proof program.
 pub const EXAMPLE_PROOF_ELF: &[u8] = include_elf!("example_proof_program");
@@ -17,8 +26,41 @@ struct Args {
     #[clap(long)]
     prove: bool,
 
+    #[clap(long)]
+    verify: bool,
+
     #[clap(long, default_value = "0")]
     n: u32,
+
+    #[clap(long, default_value = "example_program_proof.bin")]
+    proof_path: String,
+}
+
+fn verify_proof(client: &EnvProver, proof_path: &str) {
+    println!("Verifying existing proof from file: {}", proof_path);
+    let (_, vk) = client.setup(EXAMPLE_PROOF_ELF);
+    
+    // Load proof from file
+    let proof = SP1ProofWithPublicValues::load(proof_path).expect("Failed to load proof");
+    
+    // Get public values from proof
+    let decoded = PublicValuesStruct::abi_decode(proof.public_values.as_slice(), true).unwrap();
+    let PublicValuesStruct { n, n_squared } = decoded;
+
+    // Verify proof
+    client.verify(&proof, &vk).expect("proof verification failed");
+    println!("Proof successfully verified!");
+    
+    println!("\n=== Verification Details ===");
+    println!("\nInput Data:");
+    println!("  N: {}", n);
+    
+    println!("\nOutput Data:");
+    println!("  N: {}", n);
+    println!("  N squared: {}", n_squared);
+    
+    println!("\nPublic Values (Raw):");
+    println!("  {}", hex::encode(&proof.public_values));
 }
 
 fn main() {
@@ -29,8 +71,8 @@ fn main() {
     // Parse command line arguments
     let args = Args::parse();
 
-    if args.execute == args.prove {
-        eprintln!("Error: You must specify either --execute or --prove");
+    if args.execute == args.prove && args.prove == args.verify {
+        eprintln!("Error: You must specify exactly one of --execute, --prove, or --verify");
         std::process::exit(1);
     }
 
@@ -58,6 +100,8 @@ fn main() {
 
         // Log executed instruction count
         println!("Number of instructions executed: {}", report.total_instruction_count());
+    } else if args.verify {
+        verify_proof(&client, &args.proof_path);
     } else {
         // Setup program for proof generation
         let (pk, vk) = client.setup(EXAMPLE_PROOF_ELF);
