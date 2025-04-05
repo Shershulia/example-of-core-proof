@@ -102,6 +102,7 @@ fn main() {
         println!("Number of instructions executed: {}", report.total_instruction_count());
     } else if args.verify {
         verify_proof(&client, &args.proof_path);
+        println!("Your proof is valid! Welcome to the sp1 club buddy!")
     } else {
         // Setup program for proof generation
         let (pk, vk) = client.setup(EXAMPLE_PROOF_ELF);
